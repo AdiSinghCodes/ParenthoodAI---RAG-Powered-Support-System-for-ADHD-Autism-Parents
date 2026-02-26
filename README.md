@@ -265,32 +265,6 @@ Contributions are welcome! If you'd like to contribute to this project, please f
 
 Please ensure your code adheres to the project's coding standards and includes any necessary tests.
 
-## Team
-
-Meet the talented team behind ParenthoodAI:
-
-### 👨‍💻 **Kamraan Mulani** - *AI and Backend Developer*
-Focuses on backend systems and AI pipelines to ensure robust and scalable data-driven interactions.
-- 📧 Email: [kamraanmulani8284@gmail.com](mailto:kamraanmulani8284@gmail.com)
-- 💼 LinkedIn: [Connect with Kamraan](https://www.linkedin.com/in/kamraan-mulani-944166223/)
-
-### 👨‍💻 **Rohit Gupta** - *AI and Frontend Developer*
-Specializes in integrating AI models with user-friendly frontend interfaces to enhance chatbot experiences.
-- 📧 Email: [rohitgupta87798@gmail.com](mailto:rohitgupta87798@gmail.com)
-- 💼 LinkedIn: [Connect with Rohit](https://www.linkedin.com/in/rohit-gupta-687b9829a/)
-
-
-### 👨‍💻 **Aditya Singh** - *Frontend Developer*
-Crafts responsive UI components and ensures smooth user journeys across devices and browsers.
-- 📧 Email: [adityapsingh565@gmail.com](mailto:adityapsingh565@gmail.com)
-- 💼 LinkedIn: [Connect with Aditya](https://www.linkedin.com/in/aditya-singh-2b319b299/)
-
-### 👨‍💻 **Afraz Hussain** - *Frontend Developer*
-Implements modern design principles to build clean, accessible, and interactive user interfaces.
-- 📧 Email: [afrazanwarhussain@gmail.com](mailto:afrazanwarhussain@gmail.com)
-- 💼 LinkedIn: [Connect with Afraz](https://www.linkedin.com/in/afraz-hussain-60614b29a/)
-
----
 
 *We are passionate about creating technology that makes a real difference in the lives of parents and children with special needs.*
 
