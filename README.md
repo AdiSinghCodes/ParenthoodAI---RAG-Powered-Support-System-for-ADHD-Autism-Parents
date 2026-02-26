@@ -266,10 +266,4 @@ Contributions are welcome! If you'd like to contribute to this project, please f
 Please ensure your code adheres to the project's coding standards and includes any necessary tests.
 
 
-*We are passionate about creating technology that makes a real difference in the lives of parents and children with special needs.*
-
-
-
-````
-
 
