@@ -13,8 +13,8 @@ services:
       - 7474:7474
       - 7687:7687
     environment:
-      NEO4J_AUTH: admin/admin
-      NEO4JLABS_PLUGINS: '["apoc"]'
+      NEO4J_AUTH: neo4j/adminpassword
+      NEO4J_PLUGINS: '["apoc"]'
       NEO4J_dbms_security_procedures_unrestricted: 'apoc.*,apoc.meta.*'
       NEO4J_dbms_security_procedures_allowlist: 'apoc.*,apoc.meta.*'
       NEO4J_apoc_import_file_enabled: 'true'
@@ -28,8 +28,8 @@ services:
     ports:
       - 27017:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: "admin"
-      MONGO_INITDB_ROOT_PASSWORD: "admin"
+      MONGO_INITDB_ROOT_USERNAME: "adityapsingh565"
+      MONGO_INITDB_ROOT_PASSWORD: "PPMXK5O9BDLeSxoe"
     volumes:
       - mongodb_data:/data/db
       

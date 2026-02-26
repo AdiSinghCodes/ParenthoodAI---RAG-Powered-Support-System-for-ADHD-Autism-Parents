@@ -8,6 +8,12 @@ import chatRoutes from './routes/chatRoutes';
 
 dotenv.config();
 
+console.log('[Server] Environment loaded:');
+console.log('[Server] JWT_SECRET exists:', !!process.env.JWT_SECRET);
+console.log('[Server] JWT_SECRET value:', process.env.JWT_SECRET || 'NOT SET');
+console.log('[Server] MONGODB_URI exists:', !!process.env.MONGODB_URI);
+console.log('[Server] PORT:', process.env.PORT);
+
 const app = express();
 
 // Middleware

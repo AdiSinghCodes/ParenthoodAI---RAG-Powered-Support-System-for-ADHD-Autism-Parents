@@ -172,8 +172,8 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, disabled }) 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border-t p-4 bg-background">
-      <div className="flex items-end gap-2">
+    <form onSubmit={handleSubmit} className="border-t border-indigo-100/50 p-5 bg-gradient-to-r from-white/80 via-indigo-50/30 to-purple-50/30 backdrop-blur-xl">
+      <div className="flex items-end gap-3">
         <div className="relative flex-1">
           <Textarea
             ref={textareaRef}
@@ -183,14 +183,20 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, disabled }) 
               setInterim(''); // Clear interim when typing manually
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Ask Dr. Kamraan... (or use the mic)"
-            className="min-h-[60px] w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 pr-12"
+            placeholder="Ask Dr. Joy anything about parenting... 💬"
+            className="min-h-[60px] w-full resize-none rounded-2xl border-2 border-indigo-200/50 bg-white/90 backdrop-blur-sm px-5 py-3 pr-12 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 transition-all duration-300 shadow-lg hover:shadow-xl placeholder:text-gray-400"
             disabled={disabled}
             aria-label="Type your message here"
           />
           {interim && (
-            <div className="absolute bottom-0 left-0 w-full px-3 py-2 text-muted-foreground italic">
+            <div className="absolute bottom-0 left-0 w-full px-5 py-3 text-indigo-500 italic text-sm animate-pulse">
               {interim}
+            </div>
+          )}
+          {isRecording && (
+            <div className="absolute top-3 right-3 flex items-center gap-2 px-3 py-1 bg-red-500 text-white rounded-full text-xs font-medium animate-pulse shadow-lg">
+              <span className="w-2 h-2 bg-white rounded-full animate-ping"></span>
+              Recording...
             </div>
           )}
         </div>
@@ -200,22 +206,28 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, disabled }) 
           size="icon"
           variant="outline"
           onClick={toggleRecording}
-          className={isRecording ? 'bg-destructive text-destructive-foreground animate-pulse' : ''}
+          className={`
+            h-[60px] w-[60px] rounded-2xl transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-xl
+            ${isRecording 
+              ? 'bg-gradient-to-r from-red-500 to-pink-600 text-white border-none animate-pulse' 
+              : 'bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-600 hover:from-indigo-200 hover:to-purple-200 border-2 border-indigo-200/50'
+            }
+          `}
           disabled={disabled || !isSpeechRecognitionSupported}
           title={
             isSpeechRecognitionSupported
               ? isRecording
                 ? 'Stop recording'
-                : 'Start recording'
+                : 'Start voice input'
               : 'Speech input not supported'
           }
         >
           {!isSpeechRecognitionSupported ? (
-            <AlertCircle size={18} />
+            <AlertCircle size={24} />
           ) : isRecording ? (
-            <MicOff size={18} />
+            <MicOff size={24} />
           ) : (
-            <Mic size={18} />
+            <Mic size={24} />
           )}
         </Button>
 
@@ -224,15 +236,17 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, disabled }) 
           size="icon"
           disabled={!message.trim() || disabled}
           title="Send message"
+          className="h-[60px] w-[60px] rounded-2xl bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 hover:from-indigo-600 hover:via-purple-700 hover:to-pink-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 group"
         >
-          <Send size={18} />
+          <Send size={24} className="transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
         </Button>
       </div>
 
       {micError && (
-        <p className="text-xs text-destructive mt-1 flex items-center gap-1">
-          <AlertCircle size={14} /> {micError}
-        </p>
+        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-red-600 text-sm animate-shake">
+          <AlertCircle size={16} className="flex-shrink-0" />
+          <p>{micError}</p>
+        </div>
       )}
     </form>
   );

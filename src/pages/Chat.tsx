@@ -4,12 +4,13 @@ import ChatSidebar from '@/components/chat/ChatSidebar';
 import MessageList, { Message } from '@/components/chat/MessageList';
 import MessageInput from '@/components/chat/MessageInput';
 import { toast } from 'sonner';
-import { getInitialMessage, getDrKamraanResponse, memClient } from '@/lib/gemini-service';
+import { getInitialMessage, getDrKamraanResponse, memClient } from '@/lib/groq-service';
 import { mongoDBService } from '@/lib/mongodb-service';
 import { authService } from '@/lib/auth-service';
 import { Switch } from '@/components/ui/switch';
-import { Brain, Volume2, Globe } from 'lucide-react';
+import { Brain, Volume2, Globe, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import {
   Tooltip,
   TooltipContent,
@@ -569,21 +570,61 @@ const Chat: React.FC = () => {
 
   return (
     <Layout>
-      <div className="flex h-[calc(100vh-4rem-4rem)] overflow-hidden">
+      <div className="flex h-[calc(100vh-4rem-4rem)] overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative">
+        {/* Animated Background Blobs */}
+        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-indigo-300/30 to-purple-300/30 rounded-full blur-3xl animate-blob"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-300/30 to-pink-300/30 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/3 w-80 h-80 bg-gradient-to-r from-blue-300/30 to-indigo-300/30 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
+        
         <ChatSidebar
           chatSessions={chatSessions}
           onSelectChat={selectChat}
           onNewChat={createNewChat}
         />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex justify-end items-center gap-2 p-2 border-b">
-            <Brain size={18} className={useReasoning ? "text-primary" : "text-muted-foreground"} />
-            <span className="text-sm mr-2">Structured Advice</span>
-            <Switch
-              checked={useReasoning}
-              onCheckedChange={toggleReasoning}
-            />
+        
+        <div className="flex-1 flex flex-col overflow-hidden bg-white/60 backdrop-blur-xl border-l border-indigo-100/50 shadow-2xl relative z-10">
+          {/* Enhanced Header with Avatar and Controls */}
+          <div className="relative px-6 py-5 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 text-white shadow-2xl">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-700 opacity-50 blur-xl"></div>
+            <div className="relative flex justify-between items-center gap-4">
+              <div className="flex items-center gap-4">
+                {/* Animated Avatar */}
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-white/30 rounded-full blur-md group-hover:blur-lg transition-all duration-500"></div>
+                  <div className="relative w-14 h-14 bg-gradient-to-br from-white/20 to-white/5 rounded-full flex items-center justify-center backdrop-blur-sm border-2 border-white/30 shadow-xl transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                    <MessageCircle size={24} className="text-white" />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 h-4 w-4 bg-green-400 rounded-full border-2 border-white animate-pulse shadow-lg shadow-green-400/50"></div>
+                </div>
+                
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-bold text-xl">Dr. Joy</h2>
+                    <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs font-medium backdrop-blur-sm">AI</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-white/90">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <p>Online • Parenting Specialist</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Structured Advice Toggle */}
+              <div className="flex items-center gap-3 bg-white/15 px-5 py-3 rounded-2xl backdrop-blur-xl border border-white/20 shadow-xl transform hover:scale-105 transition-all duration-300">
+                <Brain size={20} className={cn("transition-all duration-300", useReasoning ? "text-white scale-110" : "text-white/60")} />
+                <div className="flex flex-col">
+                  <span className="text-xs text-white/80">AI Mode</span>
+                  <span className="text-sm font-semibold">{useReasoning ? "Structured" : "Quick"}</span>
+                </div>
+                <Switch
+                  checked={useReasoning}
+                  onCheckedChange={toggleReasoning}
+                  className="data-[state=checked]:bg-white/30"
+                />
+              </div>
+            </div>
           </div>
+          
           <EnhancedMessageList />
           <MessageInput onSendMessage={handleSendMessage} disabled={isTyping} />
         </div>

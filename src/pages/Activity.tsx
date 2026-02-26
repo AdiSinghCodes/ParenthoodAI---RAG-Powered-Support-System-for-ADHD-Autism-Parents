@@ -153,13 +153,15 @@ const Activity: React.FC = () => {
   if (selectedActivity) {
     return (
       <Layout>
-        <div className="container py-12 px-4">
-          <ActivityQuiz
-            title={selectedActivity.title}
-            description={selectedActivity.description}
-            quizItems={selectedActivity.quizItems}
-            onComplete={handleCompleteActivity}
-          />
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 py-12 px-4">
+          <div className="container max-w-4xl mx-auto">
+            <ActivityQuiz
+              title={selectedActivity.title}
+              description={selectedActivity.description}
+              quizItems={selectedActivity.quizItems}
+              onComplete={handleCompleteActivity}
+            />
+          </div>
         </div>
       </Layout>
     );
@@ -167,23 +169,34 @@ const Activity: React.FC = () => {
 
   return (
     <Layout>
-      <div className="container py-12 px-4">
-        <h1 className="text-3xl font-bold mb-8 text-center">Learning Activities</h1>
-        <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-          Help your child learn important safety concepts through interactive activities.
-          Each activity includes engaging images and multiple-choice questions to reinforce learning.
-        </p>
-        
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {activities.map((activity) => (
-            <ActivityCard
-              key={activity.id}
-              title={activity.title}
-              description={activity.description}
-              image={activity.image}
-              onStart={() => handleStartActivity(activity)}
-            />
-          ))}
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 px-4">
+        <div className="container">
+          <div className="text-center mb-12">
+            <div className="inline-block px-4 py-2 bg-gradient-to-r from-green-500 to-blue-600 text-white text-sm font-semibold rounded-full mb-4">
+              🎮 Interactive Learning
+            </div>
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+              <span className="bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Learning Activities
+              </span>
+            </h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Help your child learn important safety concepts through interactive activities.
+              Each activity includes engaging images and multiple-choice questions to reinforce learning.
+            </p>
+          </div>
+          
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+            {activities.map((activity) => (
+              <ActivityCard
+                key={activity.id}
+                title={activity.title}
+                description={activity.description}
+                image={activity.image}
+                onStart={() => handleStartActivity(activity)}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </Layout>

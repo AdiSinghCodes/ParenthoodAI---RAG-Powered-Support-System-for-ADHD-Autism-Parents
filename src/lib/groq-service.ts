@@ -4,8 +4,11 @@ import neo4j, { Driver, Session } from "neo4j-driver";
 import { mongoDBService } from './mongodb-service';
 
 // Initialize Groq with enhanced configuration
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || "";
+console.log("[Groq] API Key loaded:", GROQ_API_KEY ? `${GROQ_API_KEY.substring(0, 10)}...` : "NOT SET");
+
 const groq = new Groq({
-  apiKey: import.meta.env.VITE_GROQ_API_KEY || "",
+  apiKey: GROQ_API_KEY,
   dangerouslyAllowBrowser: true, // Only for development! Avoid in production.
 });
 
@@ -34,7 +37,7 @@ const neo4jDriver = neo4j.driver(
   import.meta.env.VITE_NEO4J_URL || "bolt://localhost:7687",
   neo4j.auth.basic(
     import.meta.env.VITE_NEO4J_USERNAME || "neo4j",
-    import.meta.env.VITE_NEO4J_PASSWORD || ""
+    import.meta.env.VITE_NEO4J_PASSWORD || "adminpassword"
   ),
   {
     maxConnectionPoolSize: 50,
@@ -42,9 +45,10 @@ const neo4jDriver = neo4j.driver(
   }
 );
 
-// Current supported models
+// Current supported models (as of Feb 2026)
 const SUPPORTED_MODELS = {
-  DEFAULT: "gemma2-9b-it", // Most capable model
+  DEFAULT: "llama-3.3-70b-versatile", // Most capable and current model
+  FAST: "llama-3.1-8b-instant", // Faster alternative
 };
 
 const DEFAULT_MODEL = SUPPORTED_MODELS.DEFAULT;
@@ -737,48 +741,27 @@ Analyze the following message and generate Cypher:`,
 
   private async inWrite<T>(work: (session: Session) => Promise<T>): Promise<T> {
     return this.withSession(async (session) => {
-      let result: T;
-      try {
-        // Start transaction
-        await session.run('BEGIN');
-        
-        // Execute the work
-        result = await work(session);
-        
-        // Commit transaction
-        await session.run('COMMIT');
-        
-        return result;
-      } catch (error) {
-        // Rollback on error
-        try {
-          await session.run('ROLLBACK');
-        } catch (rollbackError) {
-          console.error('Error during transaction rollback:', rollbackError);
-        }
-        throw error;
-      }
+      // Use Neo4j driver's writeTransaction instead of manual BEGIN/COMMIT
+      return await session.executeWrite(async (tx) => {
+        // Create a wrapper session-like object for compatibility
+        const txSession = {
+          run: tx.run.bind(tx)
+        } as Session;
+        return await work(txSession);
+      });
     });
   }
 
   private async inRead<T>(work: (session: Session) => Promise<T>): Promise<T> {
     return this.withSession(async (session) => {
-      try {
-        // For read operations, we start a read transaction
-        await session.run('BEGIN READ');
-        
-        const result = await work(session);
-        
-        await session.run('COMMIT');
-        return result;
-      } catch (error) {
-        try {
-          await session.run('ROLLBACK');
-        } catch (rollbackError) {
-          console.error('Error during read transaction rollback:', rollbackError);
-        }
-        throw error;
-      }
+      // Use Neo4j driver's readTransaction instead of manual BEGIN READ/COMMIT
+      return await session.executeRead(async (tx) => {
+        // Create a wrapper session-like object for compatibility
+        const txSession = {
+          run: tx.run.bind(tx)
+        } as Session;
+        return await work(txSession);
+      });
     });
   }
 }
@@ -795,14 +778,22 @@ const memClient = new Memory();
 // Health check utility
 const checkAPIHealth = async (): Promise<boolean> => {
   try {
+    console.log("[Groq] Checking API health...");
     await groq.chat.completions.create({
       model: DEFAULT_MODEL,
       messages: [{ role: "user", content: "ping" }],
       max_tokens: 1,
     });
+    console.log("[Groq] API health check passed ✓");
     return true;
-  } catch (error) {
-    console.error("API Health Check Failed:", error); // Log health check failures
+  } catch (error: any) {
+    console.error("[Groq] API Health Check Failed:", error);
+    console.error("[Groq] Health check error details:", {
+      message: error?.message,
+      status: error?.status,
+      code: error?.code,
+      type: error?.type
+    });
     return false;
   }
 };
@@ -881,6 +872,9 @@ CRITICAL INSTRUCTIONS:
   }
 
   try {
+    console.log("[Groq] Generating response with model:", DEFAULT_MODEL);
+    console.log("[Groq] Messages count:", messagesWithSystem.length);
+    
     // Generate response from Groq
     const response = await groq.chat.completions.create({
       model: DEFAULT_MODEL,
@@ -890,6 +884,7 @@ CRITICAL INSTRUCTIONS:
       stream: Boolean(onStream),
     });
 
+    console.log("[Groq] Response received successfully");
     let responseContent = "";
 
     if (onStream && "stream" in response) {
@@ -928,12 +923,18 @@ CRITICAL INSTRUCTIONS:
         });
       }
     } catch (memError) {
-      console.error("Failed to store in memory:", memError);
+      console.error("[Memory] Failed to store in memory:", memError);
     }
 
     return responseContent;
-  } catch (error) {
-    console.error("Error generating response:", error);
+  } catch (error: any) {
+    console.error("[Groq] Error generating response:", error);
+    console.error("[Groq] Error details:", {
+      message: error?.message,
+      status: error?.status,
+      code: error?.code,
+      type: error?.type
+    });
     return DEFAULT_ERROR_RESPONSE;
   }
 };

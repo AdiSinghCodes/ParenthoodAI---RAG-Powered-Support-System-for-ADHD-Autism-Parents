@@ -11,6 +11,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Debug endpoint
+app.get('/api/debug', (req, res) => {
+  res.json({
+    jwtSecretExists: !!process.env.JWT_SECRET,
+    jwtSecretValue: process.env.JWT_SECRET,
+    nodeEnv: process.env.NODE_ENV,
+    mongodbUriExists: !!process.env.MONGODB_URI
+  });
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', profileRoutes);
